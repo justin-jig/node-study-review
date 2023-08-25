@@ -19,12 +19,7 @@ app.use(session({
     resave : false, //세션 데이터가 변경되지 않더라도 세션을 다시 저장할 지 여부
     saveUninitialized : true, //세션 데이터가 초기화되지 않은 상태에서도 세션을 저장할 지 여부
     // 초기화되지 않는 세션데이터? 세션을 시작한 후 데이터를 저장하지 않는 상태
-    cookie: {
-        httpOnly : true,
-        maxAge : 60 * 1000,
-    }
 }));
-
 
 // router 분리
 app.use('/', router);

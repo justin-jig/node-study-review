@@ -1,40 +1,54 @@
 import crypto from 'crypto';
-import  * as User from '../models/index.js'
+import  db from '../models/index.js'
+const User = db.User;
 // 쿠키 설정
 const cookieConfig = {
-    httpOnly: true,
-    maxAge : 60 *1000
+   
 }
 
 ////////////////////////////////
 //GET
 //메인페이지
 const main = (req, res) => {
+    res.render('index');
+};
+
+//GET
+//유저리스트 페이지
+const userList = (req, res) => {
     // 쿠키 사용
+
     if (req.session.userinfo) {
-        res.redirect(`/profile/${req.session.userinfo}`);
+        User.findAll().then((result) => {
+            let user = {};
+            for (let i = 0; i < result.length; i++) {
+                if (result[i].dataValues.id === Number(req.session.userinfo)) {
+                    user.name = result[i].dataValues.name;
+                }
+            }
+            console.log('user',user)
+            res.render('userList', {users : result, user: user});
+        })
+    
     } else {
-        res.render('index');
+        res.redirect('/');
     }
 };
 //회원가입페이지
 const signup = (req, res) => {
     // 쿠키생성
     // res.cookie(쿠키이름, 쿠키값, 옵션객체)
-    
     if (req.session.userinfo) {
-        res.redirect(`/profile/${req.session.userinfo}`);
+        res.redirect('/');
     } else {
-        res.cookie('testCookie', cookieConfig);
         res.render('signup');
     }
-
 };
 //로그인페이지
 const signin = (req, res) => {
 
     if (req.session.userinfo) {
-        res.redirect(`/profile/${req.session.userinfo}`);
+        res.redirect('/');
     } else {
         res.render('signin');
     }
@@ -46,12 +60,16 @@ const profile = (req, res) => {
     console.log(req.query);
     // findOne : 데이터베이스에서 하나의 정보를 찾을 때 사용, 객체변화
     // where는 객체형태로 찾을 정보를 입력
-    User.findOne({
-        where: { id: req.params.number },
-    }).then((result) => {
-        res.render('profile', { data: result });
-    })
 
+    if (req.session.userinfo) {
+        User.findOne({
+            where: { id: req.session.userinfo },
+        }).then((result) => {
+            res.render('profile', { data: result });
+        })
+    } else {
+        res.redirect('/');
+    }
 };
 const buy = (req, res) => {};
 
@@ -94,6 +112,8 @@ const post_signin = (req, res) => {
             const compareResult =  crypto.timingSafeEqual(compare, Buffer.from(dataValues.pw,'base64'));
             if (compareResult) {
                 req.session.userinfo = dataValues.id;
+                res.cookie('token',{id : req.body.id} ,cookieConfig);
+                res.cookie('id', dataValues.id ,cookieConfig);
                 console.log(req.session);
                 res.json({result:true, data: {id: dataValues.id, name :dataValues.name}})    
             } else {
@@ -146,6 +166,20 @@ const destroy = (req, res) => {
         }   
     })
 }
+
+const logout = (req, res) => {
+
+    delete req.session.userinfo;
+    console.log('req.session',req.session)
+    if (!req.session.userinfo) {
+        res.json({result:true});
+    } else {
+        res.json({result:false});
+    }   
+}
+
+
+
 export default {
     main,
     signup,
@@ -155,5 +189,7 @@ export default {
     post_signup,
     post_signin,
     edit_profile,
-    destroy
+    destroy,
+    userList,
+    logout
 }

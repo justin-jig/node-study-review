@@ -28,7 +28,7 @@
                     });
                     if (res.data.result) {
                         alert(`${res.data.data.name}님 로그인 성공`);
-                        document.location.href = `/profile/${res.data.data.id}`;
+                        document.location.href = `/`;
                     } else {
                         alert('로그인 실패');
                         document.location.reload();

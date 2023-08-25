@@ -8,58 +8,7 @@
     </head>
     <body>
         <h1>MVC</h1>
-
-        <div id="mainBox">
-        </div>
-  
+        <a href="/signin">로그인페이지</a>
+        <a href="/signup">회원가입페이지</a>
     </body>
-
-    <script>
-
-      (function(){
-        const cookieSplit = document.cookie.split(';');
-        const cookieObj = {};
-        console.log('document.cookie',document.cookie)
-        new Promise((resolve, reject) => {
-            for (let i = 0; i < cookieSplit.length; i++) {
-                let cookieSplit2 = cookieSplit[i].split('=')
-                cookieObj[cookieSplit2[0].trim()] = cookieSplit2[1];
-            }
-            resolve('');
-        }).then(() => {
-            console.log('cookieObj',cookieObj);
-            if (cookieObj.token && cookieObj.id) {
-                document.getElementById('mainBox').innerHTML += `
-                    <a href="/profile">프로필페이지</a>
-                    <a href="/userList">유저리스트</a>
-                    <button onclick="logout()">로그아웃</button>
-                `
-            } else {
-                document.getElementById('mainBox').innerHTML += `
-                    <a href="/signin">로그인페이지</a>
-                    <a href="/signup">회원가입페이지</a>
-                `
-            }
-        }).catch(() => {
-
-        })
-
-        })()
-
-        async function logout () {
-
-            document.cookie = encodeURIComponent('token') + '=; expires=Thu, 01 JAN 1999 00:00:10 GMT'
-            document.cookie = encodeURIComponent('id') + '=; expires=Thu, 01 JAN 1999 00:00:10 GMT'
-
-            const res = await axios({
-                method:'POST',
-                url : '/loguot'
-            })
-            if (res.data.result) {
-                window.location.reload();
-            }
-        }
-
-    </script>
-
 </html>
