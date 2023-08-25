@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user리스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<style>
+    .input-box {
+        min-height: 180px;
+    }
+    table {
+        width: 30%; text-align: center;
+    }
+</style>
+
+<body>
+    <h2>user리스트</h2>
+    <div class="input-box">
+        <form onsubmit="userRegister(event)">
+            <label>이름</label>
+            <input type="text" id="name"/><br/>
+            <label>전공</label>
+            <input type="text" id="major"/><br/>
+            <span>성별</span><br/>
+            <label for="man">남자</label>
+            <input type="radio" name="gender" id="man" value="남자">
+            <label for="woman">여자</label>
+            <input type="radio" name="gender" id="woman" value="여자"/><br/><br/>
+            <button type="submit">등록하기</button>
+        </form>
+    </div>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>이름</th>
+                <th>전공</th>
+                <th>성별</th>
+                <th>비고</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            <% for(let i=0; i < users.length; i++) { %>
+                <tr>
+                    <td><%= users[i].id %></td>
+                    <td><%= users[i].name %></td>
+                    <td><%= users[i].major %></td>
+                    <td><%= users[i].gender %></td>
+                    <td></td>
+                </tr>
+            <% } %>
+    </table>
+
+    <script>
+
+        async function userRegister(event) {
+            event.preventDefault(); 
+            const gender = document.getElementsByName('gender');
+            let gendervalue = '';
+            if (gender.length) {
+                for (let i=0; i< gender.length; i++) {
+                    if (gender[i].checked) {
+                        gendervalue = gender[i].value;
+                    }
+
+                    if (i === gender.length -1 && gendervalue === '' ) {
+                        return alert('성별을 선택해주세요');
+                    } 
+                }
+            }
+            const name = document.querySelector('#name');
+            const major = document.querySelector('#major');
+            if(name.value ==='') return alert('이름을 확인해주세요.');
+            if(major.value === '') return alert('전공을 확인해주세요.');
+
+            const res = await axios({
+                method :'POST',
+                url : '/user/create',
+                data : {
+                    name: name.value,
+                    major: major.value,
+                    gender: gendervalue
+                }
+            })
+            if (res) {
+                console.log(res);
+                let tbody = document.getElementById('tbody');
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${res.data.user.id}</td>
+                        <td>${res.data.user.name}</td>
+                        <td>${res.data.user.major}</td>
+                        <td>${res.data.user.gender}</td>
+                        <td></td>
+                    </tr>
+                `
+            }   
+        }
+
+    </script>
+</body>
+</html>

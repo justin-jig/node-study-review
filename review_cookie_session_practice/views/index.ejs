@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <title>Document</title>
+    </head>
+    <body>
+        <h1>Session Cookie 활용</h1>
+        <a href="/signin">로그인페이지</a>
+        <a href="/signup">회원가입페이지</a>
+
+        <script>
+
+            (function(){
+                const cookieSplit = document.cookie.split(';');
+                const cookieObj = {};
+                new Promise((resolve, reject) => {
+                    for (let i = 0; i < cookieSplit.length; i++) {
+                        let cookieSplit2 = cookieSplit[i].split('=')
+                        cookieObj[cookieSplit2[0].trim()] = cookieSplit2[1];
+                    }
+                    resolve('');
+                }).then(() => {
+                    if (cookieObj.token && cookieObj.userid ) {
+                        getProfile(cookieObj.userid);
+                    } else {
+                        alert('로그인해주세요.');
+                    }
+                }).catch(() => {
+                    tokenDelete();
+                })
+            })()
+
+        </script>
+    </body>
+</html>

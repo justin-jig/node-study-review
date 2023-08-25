@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>user리스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<style>
+
+    table {
+        width: 30%; text-align: center;
+    }
+</style>
+
+<body>
+    
+    <h2> <%= user.name %>님이 사용 중입니다.</h2>
+    <h2>user리스트</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>번호</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>비고</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            <% for(let i=0; i < users.length; i++) { %>
+                <tr>
+                    <td><%= users[i].id %></td>
+                    <td><%= users[i].userid %></td>
+                    <td><%= users[i].name %></td>
+                    <td></td>
+                </tr>
+            <% } %>
+    </table>
+</body>
+</html>
